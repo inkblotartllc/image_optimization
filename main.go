@@ -27,19 +27,19 @@ var (
 		".gif",
 		".bmp",
 	}
-	// All files in the image directory
-	allFilesInDirectory []string
 )
 
 func main() {
+	// All files in the image directory
+	var allFilesInDirectory []string
 	// Check if the image directory exists
 	for _, directory := range imageDirectory {
 		if directoryExists(directory) {
 			allFilesInDirectory = walkAndAppendPath(directory)
 		}
 	}
-	for _, approvedFileTypes := range imageExtensions {
-		for _, file := range allFilesInDirectory {
+	for _, file := range allFilesInDirectory {
+		for _, approvedFileTypes := range imageExtensions {
 			if filepath.Ext(file) == approvedFileTypes {
 				optimizeImage(file)
 			}
