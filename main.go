@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"golang.org/x/image/bmp"
+	"golang.org/x/image/tiff"
 )
 
 var (
@@ -64,6 +65,10 @@ func optimizeImage(path string) {
 	case ".png":
 		if getContentType(path) == "image/png" {
 			removeEXIFDataFromPNGImage(path)
+		}
+	case ".tiff":
+		if getContentType(path) == "image/tiff" {
+			removeEXIFDataFromTIFFImage(path)
 		}
 	}
 }
@@ -226,6 +231,34 @@ func removeEXIFDataFromPNGImage(path string) {
 		log.Fatalln(err)
 	}
 	err = png.Encode(outfile, img)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = file.Close()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = outfile.Close()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+// Remove all the EXIF data from a tiff file
+func removeEXIFDataFromTIFFImage(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	img, _, err := image.Decode(file)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	outfile, err := os.Create(path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tiff.Encode(outfile, img, nil)
 	if err != nil {
 		log.Fatalln(err)
 	}
