@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/kolesa-team/go-webp/encoder"
 	"github.com/kolesa-team/go-webp/webp"
@@ -44,37 +45,11 @@ func main() {
 	for _, file := range allFilesInDirectory {
 		for _, approvedFileTypes := range imageExtensions {
 			if filepath.Ext(file) == approvedFileTypes {
-				optimizeImage(file)
+				if strings.Contains(getContentType(file), "image") {
+					getAllDataFromImage(file)
+				}
 			}
 		}
-	}
-}
-
-//
-func optimizeImage(path string) {
-	switch getFileExtension(path) {
-	case ".bmp":
-		if getContentType(path) == "image/bmp" {
-			getDataFromBMP(path)
-		}
-	case ".gif":
-		if getContentType(path) == "image/gif" {
-			getDataFromGIF(path)
-		}
-	case ".jpg", ".jpeg":
-		if getContentType(path) == "image/jpeg" {
-			getDataFromJPEG(path)
-		}
-	case ".png":
-		if getContentType(path) == "image/png" {
-			getDataFromPNG(path)
-		}
-	case ".tiff":
-		if getContentType(path) == "image/tiff" {
-			getDataFromTIFF(path)
-		}
-	default:
-		log.Println("File type not supported.")
 	}
 }
 
@@ -137,64 +112,8 @@ func getContentType(path string) string {
 	return http.DetectContentType(buffer)
 }
 
-// Get the content from the bmp image
-func getDataFromBMP(path string) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	imageData, _, err := image.Decode(file)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Encode the image to webp
-	encodeImageToWEBP(path, imageData, 100)
-}
-
-// Get the content from gif
-func getDataFromGIF(path string) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	imageData, _, err := image.Decode(file)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Encode the image to webp
-	encodeImageToWEBP(path, imageData, 100)
-}
-
-// Remove EXIF Data from JPEG file.
-func getDataFromJPEG(path string) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	imageData, _, err := image.Decode(file)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Encode the image to webp
-	encodeImageToWEBP(path, imageData, 100)
-}
-
-// Remove all the EXIF data from an PNG file
-func getDataFromPNG(path string) {
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	imageData, _, err := image.Decode(file)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Encode the image to webp
-	encodeImageToWEBP(path, imageData, 100)
-}
-
-// Remove all the EXIF data from a tiff file
-func getDataFromTIFF(path string) {
+// Get all the data from an given image.
+func getAllDataFromImage(path string) {
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatalln(err)
