@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	// Image path directory
+	// Image Path
 	imageDirectory = []string{
 		"/",
 	}
