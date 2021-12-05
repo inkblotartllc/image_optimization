@@ -15,7 +15,7 @@ jobs:
       with:
         languages: go
     - name: Install dependencies
-      run: apt-get install webp -y
+      run: sudo apt-get install webp -y
     - name: Autobuild
       uses: github/codeql-action/autobuild@v1
     - name: Perform CodeQL Analysis
